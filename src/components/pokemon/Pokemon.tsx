@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import type { PokemonDetailData } from '../../services/pokemon'
 import { useGetPokemonCustomQuery } from '../../services/pokemon'
@@ -12,8 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card'
-
-import { addToHistoryList } from '../history/historySlice'
 
 type pokemonProps = {
   pokemon: PokemonDetailData
@@ -69,9 +67,7 @@ export const PokemonDetail = ({ pokemon }: pokemonProps) => {
   )
 }
 
-export default function Pokemon() {
-  const [showDetail, setShowDetail] = useState(false)
-  const dispatch = useDispatch()
+export default function PokemonWrapper() {
   const currentSearchKey = useSelector((state: RootState) => state.search)
   const { data, error, isUninitialized, isLoading } = useGetPokemonCustomQuery(
     {
@@ -79,6 +75,7 @@ export default function Pokemon() {
     },
     { skip: !currentSearchKey.value }
   )
+
   if (isLoading || isUninitialized) {
     return <p>loading, please wait</p>
   }
@@ -87,13 +84,13 @@ export default function Pokemon() {
     return <p>something went wrong</p>
   }
 
+  return <Pokemon data={data} />
+}
+
+export function Pokemon({ data }: any) {
+  const [showDetail, setShowDetail] = useState(false)
   const handleShowDetails = () => {
     setShowDetail(!showDetail)
-  }
-
-  if (data) {
-    // set the dispatch to add to the history slice
-    dispatch(addToHistoryList(data))
   }
 
   return (
@@ -102,7 +99,10 @@ export default function Pokemon() {
         <CardHeader>
           <CardTitle>{data.name}</CardTitle>
           <CardDescription>
-            types: {formatter.format(data.types.map((item) => item.type.name))}
+            types:{' '}
+            {formatter.format(
+              data.types.map((item: { type: { name: any } }) => item.type.name)
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

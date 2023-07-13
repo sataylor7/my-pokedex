@@ -12,5 +12,5 @@ test('Show App Component', () => {
     </Provider>
   )
 
-  expect(screen.getByText('Hello Vite + RTK Query!')).toBeInTheDocument()
+  expect(screen.getByText('My Pokedex')).toBeInTheDocument()
 })
